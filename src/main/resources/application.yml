@@ -1,0 +1,48 @@
+#spring.config.import=optional:configserver:http://myconfigserver.com
+
+#spring.datasource.url=jdbc:mysql://localhost/auth
+##TODO: create app user to access db
+#spring.datasource.username=root
+#spring.datasource.password=password
+#spring.datasource.driver-class-name=com.mysql.jdbc.Driver
+
+#spring.jpa.hibernate.ddl-auto=create
+
+
+spring:
+  application:
+    name: PROFILE-SERVICE
+
+  devtools:
+    restart:
+      enabled: true
+  jpa:
+    hibernate:
+      ddl-auto: validate
+
+  datasource:
+    url: jdbc:mysql://localhost/profile
+    username: root
+    password: password
+    driver-class-name: com.mysql.jdbc.Driver
+
+  flyway:
+    url: jdbc:mysql://localhost:3306/auth
+    user: root
+    password: password
+    driver-class-name: com.mysql.jdbc.Driver
+    enabled: true
+    baseline-version: 0.0
+    locations: classpath:db/migration
+#    out-of-order: true
+    baseline-on-migrate: true
+    schemas: auth
+    defaultSchema: auth
+
+server:
+  port: 9002
+  servlet:
+    context-path: /profile
+
+
+
