@@ -19,13 +19,13 @@ public class AuthService {
     public String generateToken(String username) {
         //Header payload and signature all the component are claims
         Map<String, Object> claims = new HashMap<>();
-        return createToken(claims, username);
+        claims.put("username", username);
+        return createToken(claims);
     }
 
-    private String createToken(Map<String, Object> claims, String username) {
+    private String createToken(Map<String, Object> claims) {
         return Jwts.builder()
                 .setClaims(claims)
-                .setSubject(username)
                 .setIssuedAt(new Date(System.currentTimeMillis()))
                 .setExpiration(new Date(System.currentTimeMillis() + 1000 * 60 * 60))
                 .signWith(getSignKey(), SignatureAlgorithm.HS256)
