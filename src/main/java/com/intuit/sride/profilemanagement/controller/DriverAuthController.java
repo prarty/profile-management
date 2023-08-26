@@ -41,8 +41,9 @@ public class DriverAuthController {
     @PostMapping(path = "login")
     public String login(@Valid @RequestBody LoginRequest loginRequest) {
         Authentication authenticationResponse = authenticationManager.authenticate(new UsernamePasswordAuthenticationToken(loginRequest.getUsername(), loginRequest.getPassword()));
+        Long driverId = driverService.getDriverId(loginRequest.getUsername());
         if (authenticationResponse.isAuthenticated()) {
-            return authService.generateToken(loginRequest.getUsername());
+            return authService.generateToken(loginRequest.getUsername(), driverId);
         } else {
             throw new UserNotFoundException("User does not exist");
         }

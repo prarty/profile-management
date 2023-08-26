@@ -1,4 +1,4 @@
-CREATE TABLE `vehicle`
+CREATE TABLE `vehicles`
 (
     `id` bigint(20) NOT NULL AUTO_INCREMENT,
     `registration_number` varchar(50) NOT NULL,
@@ -7,5 +7,5 @@ CREATE TABLE `vehicle`
     `make`               varchar(255) NOT NULL,
     `model`              varchar(255) NOT NULL,
     PRIMARY KEY (`id`),
-    ADD UNIQUE INDEX `registration_number_UNIQUE` (`registration_number` ASC) VISIBLE;
+    UNIQUE INDEX `uni_vehicles_regn_number` (`registration_number` ASC) VISIBLE
 );

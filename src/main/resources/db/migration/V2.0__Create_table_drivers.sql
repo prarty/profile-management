@@ -1,4 +1,4 @@
-CREATE TABLE `driver`
+CREATE TABLE `drivers`
 (
     `id`            bigint(20) NOT NULL AUTO_INCREMENT,
     `first_name`    varchar(255) NOT NULL,
@@ -9,7 +9,7 @@ CREATE TABLE `driver`
     `driver_status` ENUM('REGISTERED', 'PENDING_VEHICLE_DETAILS', 'VEHICLE_DETAILS_COMPLETED', 'PENDING_ONBOARDING', 'ONBOARDING_COMPLETED', 'OFFLINE', 'ONLINE') DEFAULT 'REGISTERED',
     `vehicle_id`    bigint(20) DEFAULT NULL,
     PRIMARY KEY (`id`),
-    CONSTRAINT `fk_vehicle_id` FOREIGN KEY (`vehicle_id`) REFERENCES `vehicle` (`id`),
-    ADD UNIQUE INDEX `phone_number_UNIQUE` (`phone_number` ASC) VISIBLE,
-    ADD UNIQUE INDEX `email_UNIQUE` (`email` ASC) VISIBLE;
+    CONSTRAINT `fk_vehicle_id` FOREIGN KEY (`vehicle_id`) REFERENCES `vehicles` (`id`),
+    UNIQUE INDEX `uni_drivers_phone_num` (`phone_number` ASC) VISIBLE,
+    UNIQUE INDEX `uni_drivers_email` (`email` ASC) VISIBLE
 );

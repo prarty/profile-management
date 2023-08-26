@@ -27,7 +27,7 @@ public class AuthConfig {
     public SecurityFilterChain securityFilterChain(HttpSecurity http) throws Exception {
 
         return http.csrf(csrf -> csrf.disable())
-                .authorizeHttpRequests(req -> req.requestMatchers("/driver/**").anonymous())
+                .authorizeHttpRequests(req -> req.requestMatchers("/**").anonymous())
                 .build();
 //        return http.csrf().disable()
 //                .authorizeHttpRequests()

@@ -27,17 +27,17 @@ spring:
     driver-class-name: com.mysql.jdbc.Driver
 
   flyway:
-    url: jdbc:mysql://localhost:3306/auth
+    url: jdbc:mysql://localhost:3306/profile
     user: root
     password: password
     driver-class-name: com.mysql.jdbc.Driver
     enabled: true
     baseline-version: 0.0
     locations: classpath:db/migration
-#    out-of-order: true
+    out-of-order: true
     baseline-on-migrate: true
-    schemas: auth
-    defaultSchema: auth
+    schemas: profile
+    defaultSchema: profile
 
 server:
   port: 9002

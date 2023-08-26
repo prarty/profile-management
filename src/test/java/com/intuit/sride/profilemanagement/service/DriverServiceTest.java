@@ -11,6 +11,7 @@ import com.intuit.sride.profilemanagement.model.Driver;
 import com.intuit.sride.profilemanagement.model.DriverStatus;
 import com.intuit.sride.profilemanagement.model.Vehicle;
 import com.intuit.sride.profilemanagement.repository.DriverRepository;
+import com.intuit.sride.profilemanagement.repository.UserRepository;
 import com.intuit.sride.profilemanagement.repository.VehicleRepository;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
@@ -62,9 +63,12 @@ class DriverServiceTest {
     @Mock
     private VehicleRequest vehicleRequest;
 
+    @Mock
+    private UserRepository userRepository;
+
     @BeforeEach
     void setUp() {
-        driverService = new DriverService(mapper, driverRepository, vehicleRepository, passwordEncoder);
+        driverService = new DriverService(mapper, driverRepository, vehicleRepository, passwordEncoder, userRepository);
     }
 
 

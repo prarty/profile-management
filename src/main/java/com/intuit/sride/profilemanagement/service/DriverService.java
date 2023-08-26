@@ -7,10 +7,9 @@ import com.intuit.sride.profilemanagement.api.request.VehicleRequest;
 import com.intuit.sride.profilemanagement.exception.BadRequestException;
 import com.intuit.sride.profilemanagement.exception.ResourceAlreadyExistsException;
 import com.intuit.sride.profilemanagement.exception.UserNotFoundException;
-import com.intuit.sride.profilemanagement.model.Driver;
-import com.intuit.sride.profilemanagement.model.DriverStatus;
-import com.intuit.sride.profilemanagement.model.Vehicle;
+import com.intuit.sride.profilemanagement.model.*;
 import com.intuit.sride.profilemanagement.repository.DriverRepository;
+import com.intuit.sride.profilemanagement.repository.UserRepository;
 import com.intuit.sride.profilemanagement.repository.VehicleRepository;
 import com.intuit.sride.profilemanagement.validator.StatusTransitionValidator;
 import lombok.extern.log4j.Log4j2;
@@ -19,7 +18,9 @@ import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
+import java.time.LocalDate;
 import java.util.Optional;
+import java.util.Set;
 
 @Log4j2
 @Service
@@ -31,11 +32,14 @@ public class DriverService {
     private final VehicleRepository vehicleRepository;
     private final PasswordEncoder passwordEncoder;
 
-    public DriverService(ModelMapper modelMapper, DriverRepository driverRepository, VehicleRepository vehicleRepository, PasswordEncoder passwordEncoder) {
+    private final UserRepository userRepository;
+
+    public DriverService(ModelMapper modelMapper, DriverRepository driverRepository, VehicleRepository vehicleRepository, PasswordEncoder passwordEncoder, UserRepository userRepository) {
         this.modelMapper = modelMapper;
         this.driverRepository = driverRepository;
         this.vehicleRepository = vehicleRepository;
         this.passwordEncoder = passwordEncoder;
+        this.userRepository = userRepository;
     }
 
     public Long register(DriverRegistrationRequest request) {
@@ -51,9 +55,43 @@ public class DriverService {
         updateVehicleDetails(request.getVehicle(), currentDriver, false);
         currentDriver.setPassword(passwordEncoder.encode(request.getPassword()));
 
-        Long driverID = driverRepository.saveAndFlush(currentDriver).getId();
+        Driver driver = driverRepository.saveAndFlush(currentDriver);
+        Long driverID = driver.getId();
+        User user = createDriverUser(driver);
+        userRepository.save(user);
         log.info("Registered driver with id: {} successfully", driverID);
         return driverID;
+    }
+
+    private User createDriverUser(Driver driver) {
+        Resource driverResources = Resource.builder()
+                .resourceId("/driver/**")
+                .description("driver resources")
+                .build();
+
+        Permission driverPermission = Permission.builder()
+                .resources(Set.of(driverResources))
+                .description("Driver Permission")
+                .name("driver basic permission")
+                .build();
+
+        Role driverRole = Role.builder()
+                .name("Driver")
+                .enabled(Boolean.TRUE)
+                .description("Role for driver")
+                .applicationName("Driver-Svc")
+                .permissions(driverPermission)
+                .startDate(LocalDate.now())
+                .build();
+
+        return User.builder()
+                .id(driver.getId())
+                .email(driver.getEmail())
+                .creationDate(LocalDate.now())
+                .role(driverRole)
+                .terminationDate(null)
+                .enabled(true)
+                .build();
     }
 
     public Long update(Long id, DriverProfileUpdateRequest request) {
@@ -128,4 +166,8 @@ public class DriverService {
         }
     }
 
+    public Long getDriverId(String username) {
+        Driver driver = driverRepository.findByEmail(username).orElseThrow();
+        return driver.getId();
+    }
 }
